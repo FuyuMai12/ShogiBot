@@ -2,7 +2,10 @@ import logging
 from typing import List, Optional, Tuple
 
 from const.gameplay import Player
-from errors.gameplay import BlockedPathingError, InvalidDropError, NoPathingFoundError, OutOfBoundError
+from errors.gameplay import (
+    BlockedPathingError, InvalidDropError, NoPathingFoundError, OutOfBoundError,
+    SelfExposureDropError, SelfExposureMoveError
+)
 from pieces.base import BasePiece, MovementBaseline
 from pieces.king import KingPiece
 from pieces.pawn import PawnPiece
@@ -598,5 +601,115 @@ class CheckmateUtils:
         return True
 
     # end is_checkmate()
+
+    @classmethod
+    def move_cause_self_checked(cls,
+                                board_black: Player,
+                                board_dim: int,
+                                board_matrix: List[List[BasePiece]],
+                                moving_player: Player,
+                                initial_position: Tuple[int, int],
+                                final_position: Tuple[int, int]) -> bool:
+        """
+        Check if a move causes/keeps the current player to be / being checked
+        This method should only be called after all other checks have been finished to make sure
+        the coordinates in the moves are valid
+
+        Arguments:
+        - board_black (Player):
+            The black player of the board
+        - board_dim (int):
+            The dimension of the board
+        - board_matrix (List[List[BasePiece]]):
+            The matrix (list of list) denoting the pieces currently standing on the current board
+        - moving_player (Player):
+            The player being supposed to be performing the move
+        - initial_position (Tuple[int, int]):
+            Starting position of the move
+        - final_position (Tuple[int, int]):
+            Finishing position of the move
+
+        Returns:
+            bool: a value denoting if the player's move causes themself checked (True) or not (False)
+        """
+        old_initial = board_matrix[initial_position[0]][initial_position[1]]
+        old_final = board_matrix[final_position[0]][final_position[1]]
+        board_matrix[initial_position[0]][initial_position[1]] = None
+        board_matrix[final_position[0]][final_position[1]] = old_initial
+
+        _, checking_threats = cls.get_checking_list(
+            board_black=board_black,
+            board_dim=board_dim,
+            board_matrix=board_matrix,
+            checking_player=not moving_player
+        )
+
+        board_matrix[initial_position[0]][initial_position[1]] = old_initial
+        board_matrix[final_position[0]][final_position[1]] = old_final
+
+        # if there exists checking threats, then the move is an exposure
+        if len(checking_threats) > 0:
+            raise SelfExposureMoveError(
+                piece_type=type(old_initial),
+                initial_position=initial_position,
+                final_position=final_position
+            )
+
+        return True
+
+    # end cause_self_checked()
+
+    @classmethod
+    def drop_cause_self_checked(cls,
+                                board_black: Player,
+                                board_dim: int,
+                                board_matrix: List[List[BasePiece]],
+                                moving_player: Player,
+                                piece: BasePiece,
+                                position: Tuple[int, int]) -> bool:
+        """
+        Check if a drop causes/keeps the current player to be / being checked
+        This method should only be called after all other checks have been finished to make sure
+        the piece and coordinates in the drop are valid
+
+        Arguments:
+        - board_black (Player):
+            The black player of the board
+        - board_dim (int):
+            The dimension of the board
+        - board_matrix (List[List[BasePiece]]):
+            The matrix (list of list) denoting the pieces currently standing on the current board
+        - moving_player (Player):
+            The player being supposed to be performing the drop
+        - piece (BasePiece):
+            The piece to be dropped
+        - position (Tuple[int, int]):
+            Dropping position of the piece
+
+        Returns:
+            bool: a value denoting if the player's drop causes themself checked (True) or not (False)
+        """
+        old_cell = board_matrix[position[0]][position[1]]
+        board_matrix[position[0]][position[1]] = piece
+
+        _, checking_threats = cls.get_checking_list(
+            board_black=board_black,
+            board_dim=board_dim,
+            board_matrix=board_matrix,
+            checking_player=not moving_player
+        )
+
+        board_matrix[position[0]][position[1]] = old_cell
+
+        # if there exists checking threats, then the drop is an exposure
+        if len(checking_threats) > 0:
+            raise SelfExposureDropError(
+                piece_type=type(piece),
+                coordinate=position
+            )
+
+        return True
+
+    # end cause_self_checked()
 
 # end CheckmateUtils

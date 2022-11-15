@@ -129,8 +129,8 @@ class NoPathingFoundError(GameplayException):
     def __init__(self, piece_type: Type,
                  initial_position: Tuple[int, int],
                  final_position: Tuple[int, int]):
-        error_message = f"Impossible to move a {piece_type}" \
-                        f"from coordinate {initial_position}" \
+        error_message = f"Impossible to move a {piece_type} " \
+                        f"from coordinate {initial_position} " \
                         f"to coordinate {final_position}."
         super().__init__(error_message)
 
@@ -147,9 +147,9 @@ class BlockedPathingError(GameplayException):
     def __init__(self, piece_type: Type,
                  initial_position: Tuple[int, int],
                  final_position: Tuple[int, int]):
-        error_message = f"Impossible to move a {piece_type}" \
-                        f"from coordinate {initial_position}" \
-                        f"to coordinate {final_position}."
+        error_message = f"The path to move a {piece_type} " \
+                        f"from coordinate {initial_position} " \
+                        f"to coordinate {final_position} is blocked."
         super().__init__(error_message)
 
     # end __init__()
@@ -196,3 +196,35 @@ class InvalidDropError(GameplayException):
     # end __init__()
 
 # end DroppingPieceNotExistedError
+
+
+class SelfExposureMoveError(GameplayException):
+    """
+    Exception raised when a move causes that player to be checked
+    """
+    def __init__(self, piece_type: Type,
+                 initial_position: Tuple[int, int],
+                 final_position: Tuple[int, int]):
+        error_message = f"A move of {piece_type} " \
+                        f"from coordinate {initial_position} " \
+                        f"to coordinate {final_position} exposes the player to a check."
+        super().__init__(error_message)
+
+    # end __init__()
+
+# end SelfExposureMoveError
+
+
+class SelfExposureDropError(GameplayException):
+    """
+    Exception raised when a drop causes that player to be checked
+    """
+    def __init__(self, piece_type: Type,
+                 coordinate: Tuple[int, int]):
+        error_message = f"A drop of {piece_type} " \
+                        f"to coordinate {coordinate} exposes the player to a check."
+        super().__init__(error_message)
+
+    # end __init__()
+
+# end SelfExposureDropError
