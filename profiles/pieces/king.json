@@ -1,0 +1,74 @@
+{
+    "name_en": "King",
+    "name_vi": "Vua",
+    "name_hv_senior": "Vương tướng",
+    "name_hv_junior": "Ngọc tướng",
+    "name_kanji_full_senior": "王将",
+    "name_kanji_full_junior": "玉将",
+    "name_kanji_abbr_senior": "王",
+    "name_kanji_abbr_junior": "玉",
+    "name_en_abbr": "K",
+    "name_vi_abbr": "V",
+    "promotable": false,
+    "promoted_name_en": null,
+    "promoted_name_vi": null,
+    "promoted_name_hv_senior": null,
+    "promoted_name_hv_junior": null,
+    "promoted_name_kanji_full_senior": null,
+    "promoted_name_kanji_full_junior": null,
+    "promoted_name_kanji_abbr_senior": null,
+    "promoted_name_kanji_abbr_junior": null,
+    "promoted_name_en_abbr": null,
+    "promoted_name_vi_abbr": null,
+    "moves": [
+        {
+            "x_per_step": -1,
+            "y_per_step": -1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": -1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": -1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": -1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": -1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        }
+    ],
+    "promoted_moves": []
+}

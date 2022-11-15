@@ -1,0 +1,62 @@
+{
+    "name_en": "Gold",
+    "name_vi": "Vàng",
+    "name_hv_senior": "Kim tướng",
+    "name_hv_junior": null,
+    "name_kanji_full_senior": "金将",
+    "name_kanji_full_junior": null,
+    "name_kanji_abbr_senior": "金",
+    "name_kanji_abbr_junior": null,
+    "name_en_abbr": "G",
+    "name_vi_abbr": "Vg",
+    "promotable": false,
+    "promoted_name_en": null,
+    "promoted_name_vi": null,
+    "promoted_name_hv_senior": null,
+    "promoted_name_hv_junior": null,
+    "promoted_name_kanji_full_senior": null,
+    "promoted_name_kanji_full_junior": null,
+    "promoted_name_kanji_abbr_senior": null,
+    "promoted_name_kanji_abbr_junior": null,
+    "promoted_name_en_abbr": null,
+    "promoted_name_vi_abbr": null,
+    "moves": [
+        {
+            "x_per_step": -1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": -1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": -1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        }
+    ],
+    "promoted_moves": []
+}

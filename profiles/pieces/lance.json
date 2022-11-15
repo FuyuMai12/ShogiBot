@@ -1,0 +1,70 @@
+{
+    "name_en": "Lance",
+    "name_vi": "Thương",
+    "name_hv_senior": "Hương xa",
+    "name_hv_junior": null,
+    "name_kanji_full_senior": "香車",
+    "name_kanji_full_junior": null,
+    "name_kanji_abbr_senior": "香",
+    "name_kanji_abbr_junior": null,
+    "name_en_abbr": "L",
+    "name_vi_abbr": "Th",
+    "promotable": true,
+    "promoted_name_en": "Promoted lance",
+    "promoted_name_vi": "Thương phong cấp",
+    "promoted_name_hv_senior": "Thành hương",
+    "promoted_name_hv_junior": null,
+    "promoted_name_kanji_full_senior": "成香",
+    "promoted_name_kanji_full_junior": null,
+    "promoted_name_kanji_abbr_senior": "成香",
+    "promoted_name_kanji_abbr_junior": null,
+    "promoted_name_en_abbr": "+L",
+    "promoted_name_vi_abbr": "+Th",
+    "moves": [
+        {
+            "x_per_step": 0,
+            "y_per_step": 1,
+            "step_limit": false,
+            "bypass_pieces": false
+        }
+    ],
+    "promoted_moves": [
+        
+        {
+            "x_per_step": -1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": -1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": -1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        }
+    ]
+}

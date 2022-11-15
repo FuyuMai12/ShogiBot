@@ -1,0 +1,245 @@
+{
+    "dimension": 9,
+    "starting_units": [
+        {
+            "coor_x": 9,
+            "coor_y": 1,
+            "unit_type": "LancePiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 8,
+            "coor_y": 1,
+            "unit_type": "KnightPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 7,
+            "coor_y": 1,
+            "unit_type": "SilverPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 6,
+            "coor_y": 1,
+            "unit_type": "GoldPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 5,
+            "coor_y": 1,
+            "unit_type": "KingPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 4,
+            "coor_y": 1,
+            "unit_type": "GoldPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 3,
+            "coor_y": 1,
+            "unit_type": "SilverPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 2,
+            "coor_y": 1,
+            "unit_type": "KnightPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 1,
+            "coor_y": 1,
+            "unit_type": "LancePiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 8,
+            "coor_y": 2,
+            "unit_type": "RookPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 2,
+            "coor_y": 2,
+            "unit_type": "BishopPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 9,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 8,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 7,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 6,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 5,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 4,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 3,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 2,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 1,
+            "coor_y": 3,
+            "unit_type": "PawnPiece",
+            "side": "white"
+        },
+        {
+            "coor_x": 9,
+            "coor_y": 9,
+            "unit_type": "LancePiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 8,
+            "coor_y": 9,
+            "unit_type": "KnightPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 7,
+            "coor_y": 9,
+            "unit_type": "SilverPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 6,
+            "coor_y": 9,
+            "unit_type": "GoldPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 5,
+            "coor_y": 9,
+            "unit_type": "KingPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 4,
+            "coor_y": 9,
+            "unit_type": "GoldPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 3,
+            "coor_y": 9,
+            "unit_type": "SilverPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 2,
+            "coor_y": 9,
+            "unit_type": "KnightPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 1,
+            "coor_y": 9,
+            "unit_type": "LancePiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 8,
+            "coor_y": 8,
+            "unit_type": "BishopPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 2,
+            "coor_y": 8,
+            "unit_type": "RookPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 9,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 8,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 7,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 6,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 5,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 4,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 3,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 2,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        },
+        {
+            "coor_x": 1,
+            "coor_y": 7,
+            "unit_type": "PawnPiece",
+            "side": "black"
+        }
+    ]
+}

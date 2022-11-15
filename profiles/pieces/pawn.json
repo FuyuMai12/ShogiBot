@@ -1,0 +1,70 @@
+{
+    "name_en": "Pawn",
+    "name_vi": "Tốt",
+    "name_hv_senior": "Bộ binh",
+    "name_hv_junior": null,
+    "name_kanji_full_senior": "歩兵",
+    "name_kanji_full_junior": null,
+    "name_kanji_abbr_senior": "歩",
+    "name_kanji_abbr_junior": null,
+    "name_en_abbr": "P",
+    "name_vi_abbr": "T",
+    "promotable": true,
+    "promoted_name_en": "Tokin",
+    "promoted_name_vi": "Tốt phong cấp",
+    "promoted_name_hv_senior": "Kim",
+    "promoted_name_hv_junior": null,
+    "promoted_name_kanji_full_senior": "と金",
+    "promoted_name_kanji_full_junior": null,
+    "promoted_name_kanji_abbr_senior": "と",
+    "promoted_name_kanji_abbr_junior": null,
+    "promoted_name_en_abbr": "+P",
+    "promoted_name_vi_abbr": "+T",
+    "moves": [
+        {
+            "x_per_step": 0,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        }
+    ],
+    "promoted_moves": [
+        
+        {
+            "x_per_step": -1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": -1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": -1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        }
+    ]
+}

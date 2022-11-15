@@ -1,0 +1,76 @@
+{
+    "name_en": "Knight",
+    "name_vi": "Mã",
+    "name_hv_senior": "Quế mã",
+    "name_hv_junior": null,
+    "name_kanji_full_senior": "桂馬",
+    "name_kanji_full_junior": null,
+    "name_kanji_abbr_senior": "桂",
+    "name_kanji_abbr_junior": null,
+    "name_en_abbr": "N",
+    "name_vi_abbr": "M",
+    "promotable": true,
+    "promoted_name_en": "Promoted knight",
+    "promoted_name_vi": "Mã phong cấp",
+    "promoted_name_hv_senior": "Thành quế",
+    "promoted_name_hv_junior": null,
+    "promoted_name_kanji_full_senior": "成桂",
+    "promoted_name_kanji_full_junior": null,
+    "promoted_name_kanji_abbr_senior": "成桂",
+    "promoted_name_kanji_abbr_junior": null,
+    "promoted_name_en_abbr": "+N",
+    "promoted_name_vi_abbr": "+M",
+    "moves": [
+        {
+            "x_per_step": -1,
+            "y_per_step": 2,
+            "step_limit": true,
+            "bypass_pieces": true
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 2,
+            "step_limit": true,
+            "bypass_pieces": true
+        }
+    ],
+    "promoted_moves": [
+        
+        {
+            "x_per_step": -1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": -1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": -1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 0,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 0,
+            "step_limit": true,
+            "bypass_pieces": false
+        },
+        {
+            "x_per_step": 1,
+            "y_per_step": 1,
+            "step_limit": true,
+            "bypass_pieces": false
+        }
+    ]
+}
