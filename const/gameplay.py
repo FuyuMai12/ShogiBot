@@ -9,6 +9,7 @@ class Player(Enum):
     Senior = False
     Junior = True
 
+
 player_string_mappings = {
     Player.Senior: 'senior',
     Player.Junior: 'junior'

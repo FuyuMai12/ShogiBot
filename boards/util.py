@@ -42,7 +42,7 @@ class InvalidDroppingUtils:
                 position[1] + move_baseline.y_per_step * pov_coefficient
             )
             if 0 <= minimally_shifted_position[0] < board_dim \
-            or 0 <= minimally_shifted_position[1] < board_dim:
+               or 0 <= minimally_shifted_position[1] < board_dim:
                 return False  # not stuck. might be blocked, but that doesn't matter here
 
         return True
@@ -74,9 +74,9 @@ class InvalidDroppingUtils:
         # simply check all positions in the corresponding column
         for x_coordinate in range(board_dim):
             if board_matrix[x_coordinate][position[1]] is not None \
-            and isinstance(board_matrix[x_coordinate][position[1]], PawnPiece) \
-            and not piece.is_promoted \
-            and piece.player == board_matrix[x_coordinate][position[1]].player:
+               and isinstance(board_matrix[x_coordinate][position[1]], PawnPiece) \
+               and not piece.is_promoted \
+               and piece.player == board_matrix[x_coordinate][position[1]].player:
                 return True  # a pawn of the same side found on that column, nifu
 
         return False  # if nothing found, then no nifu
@@ -165,12 +165,12 @@ class MovementUtils:
             )
             # mismatched step counts means invalid move
             if steps_required[0] is not None and steps_required[1] is not None \
-            and steps_required[0] != steps_required[1]:
+               and steps_required[0] != steps_required[1]:
                 continue
 
             steps_required_flattened = steps_required[0] or steps_required[1]
             if steps_required_flattened is None:  # this is kind of a critical error
-                logging.warning("Double None found in steps_required - is there a baseline" \
+                logging.warning("Double None found in steps_required - is there a baseline"
                                 "of direction (0, 0) defined for this piece?")
                 continue
             if steps_required_flattened < 0:  # for consistency, step count should be positive
@@ -224,7 +224,7 @@ class MovementUtils:
             position[1] + baseline.y_per_step * step * pov_coefficient
         )
         if final_position[0] < 0 or final_position[0] >= board_dim \
-        or final_position[1] < 0 or final_position[1] >= board_dim:
+           or final_position[1] < 0 or final_position[1] >= board_dim:
             raise OutOfBoundError(final_position)
 
         if cls.is_valid_pathing(
@@ -248,7 +248,7 @@ class MovementUtils:
 
         # final check: final position shouldn't be occupied by an allied piece
         if board_matrix[final_position[0]][final_position[1]] is not None \
-        and board_matrix[final_position[0]][final_position[1]].player == piece.player:
+           and board_matrix[final_position[0]][final_position[1]].player == piece.player:
             return True  # blocked at endpoint by an ally
 
         return False  # otherwise no blockade found, not a blocked path
@@ -314,7 +314,7 @@ class MovementUtils:
             )
 
         return True
-        
+
     # end is_valid_move()
 
     @classmethod
@@ -389,13 +389,14 @@ class MovementUtils:
     # end is_valid_drop()
 
     @classmethod
-    def get_threatening_list(cls,
-                             board_black: Player,
-                             board_dim: int,
-                             board_matrix: List[List[BasePiece]],
-                             position: Tuple[int, int],
-                             threatening_player: Player) \
-                             -> List[Tuple[BasePiece, Tuple[int, int], MovementBaseline, int]]:
+    def get_threatening_list(
+        cls,
+        board_black: Player,
+        board_dim: int,
+        board_matrix: List[List[BasePiece]],
+        position: Tuple[int, int],
+        threatening_player: Player
+    ) -> List[Tuple[BasePiece, Tuple[int, int], MovementBaseline, int]]:
         """
         Get the list of pieces of a side threatening a position on the board
 
@@ -462,15 +463,16 @@ class CheckmateUtils:
     Class for checkmate utilities
     """
     @classmethod
-    def get_checking_list(cls,
-                          board_black: Player,
-                          board_dim: int,
-                          board_matrix: List[List[BasePiece]],
-                          checking_player: Player) \
-                          -> Tuple[
-                                Tuple[int, int],
-                                List[Tuple[BasePiece, Tuple[int, int], MovementBaseline, int]]
-                          ]:
+    def get_checking_list(
+        cls,
+        board_black: Player,
+        board_dim: int,
+        board_matrix: List[List[BasePiece]],
+        checking_player: Player
+    ) -> Tuple[
+        Tuple[int, int],
+        List[Tuple[BasePiece, Tuple[int, int], MovementBaseline, int]]
+    ]:
         """
         Get the list of pieces of a side checking their opponent
 
@@ -497,7 +499,7 @@ class CheckmateUtils:
         for x_coor in range(board_dim):
             for y_coor in range(board_dim):
                 if isinstance(board_matrix[x_coor][y_coor], KingPiece) \
-                and board_matrix[x_coor][y_coor].player != checking_player:
+                   and board_matrix[x_coor][y_coor].player != checking_player:
                     king_position = (x_coor, y_coor)
 
         return MovementUtils.get_threatening_list(
@@ -545,7 +547,8 @@ class CheckmateUtils:
         king_piece = board_matrix[king_position[0]][king_position[1]]
 
         # case 0: no threat
-        if len(checking_threats) == 0: return False
+        if len(checking_threats) == 0:
+            return False
 
         # try to run the king
         for baseline in board_matrix[king_position[0]][king_position[1]].moves_in_use:
@@ -560,7 +563,8 @@ class CheckmateUtils:
 
         # if not fleeable, try to block
         # if there are two or more threats, a block is futile
-        if len(checking_threats) >= 2: return True  # checkmate
+        if len(checking_threats) >= 2:
+            return True  # checkmate
         # otherwise, try blocking the threat by either moving an allied piece to intercept
         _, threat_position, threat_baseline, threat_step = checking_threats[0]
         for sub_step in range(1, threat_step):

@@ -44,22 +44,6 @@ class IncorrectPlayerError(GameplayException):
 # end IncorrectPlayerError
 
 
-class IncorrectPlayerError(GameplayException):
-    """
-    Exception raised when a move is made by an incorrect player
-    """
-    def __init__(self,
-                 attempted_player: Literal['junior', 'senior'],
-                 actual_player: Literal['junior', 'senior']):
-        error_message = f"Expected a move from {actual_player}, " \
-                        f"got {attempted_player} instead."
-        super().__init__(error_message)
-
-    # end __init__()
-
-# end IncorrectPlayerError
-
-
 class OutOfBoundError(GameplayException):
     """
     Exception raised when an input coordinate is out of bound
@@ -191,7 +175,8 @@ class DroppingPieceNotExistedError(GameplayException):
     Exception raised when the piece ordered to be drop doesn't exist
     """
     def __init__(self, piece_type: type, piece_id: int):
-        error_message = f"A {piece_type} with id #{piece_id} doesn't exist in the current player's capture pool."
+        error_message = f"A {piece_type} with id #{piece_id} " \
+                         "doesn't exist in the current player's capture pool."
         super().__init__(error_message)
 
     # end __init__()

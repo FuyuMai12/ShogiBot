@@ -6,8 +6,9 @@ from typing import Dict, List, Optional, Tuple
 from boards.util import InvalidDroppingUtils, MovementUtils
 from const.gameplay import Player
 from errors.gameplay import (
-    DroppingPieceNotExistedError, EmptyCellError, GameEndedError, GameNotInitiatedError, GameplayException,
-    IncorrectPlayerError, NotInPromotionZoneError, NotPromotableError, OccupiedCellError, OutOfBoundError, PieceNotOwnedError
+    DroppingPieceNotExistedError, EmptyCellError, GameEndedError, GameNotInitiatedError,
+    GameplayException, IncorrectPlayerError, NotInPromotionZoneError, NotPromotableError,
+    OccupiedCellError, OutOfBoundError, PieceNotOwnedError
 )
 from pieces.base import BasePiece
 
@@ -90,10 +91,10 @@ class ShogiBoard():
                 actual_player=self.next_move
             )
         if not 0 <= initial_position[0] < self.dim \
-        or not 0 <= initial_position[1] < self.dim:
+           or not 0 <= initial_position[1] < self.dim:
             raise OutOfBoundError(initial_position)
         if not 0 <= final_position[0] < self.dim \
-        or not 0 <= final_position[1] < self.dim:
+           or not 0 <= final_position[1] < self.dim:
             raise OutOfBoundError(final_position)
 
         if self.board[initial_position[0]][initial_position[1]] is None:
@@ -113,11 +114,13 @@ class ShogiBoard():
             )
 
         if promote and (
-            (current_player == self.black \
-            and not 0 <= initial_position[0] <= 2 and not 0 <= final_position[0] <= 2)
-            or \
-            (current_player == self.white \
-            and not self.dim-2 < initial_position[0] < self.dim and not self.dim-2 < final_position[0] < self.dim)
+            (current_player == self.black
+             and not 0 <= initial_position[0] <= 2
+             and not 0 <= final_position[0] <= 2)
+            or
+            (current_player == self.white
+             and not self.dim-2 < initial_position[0] < self.dim
+             and not self.dim-2 < final_position[0] < self.dim)
         ):
             raise NotInPromotionZoneError(
                 initial_position=initial_position,
@@ -161,7 +164,7 @@ class ShogiBoard():
                                 "that causes the checking function to return False")
         except GameplayException as gameplay_exception:
             logging.warning("An invalid move caused the game to end. "
-                           f"Details:\n{repr(gameplay_exception)}")
+                            f"Details:\n{repr(gameplay_exception)}")
             self.winner = not current_player
 
     # end perform_move()
@@ -191,7 +194,7 @@ class ShogiBoard():
                 actual_player=self.next_move
             )
         if not 0 <= position[0] < self.dim \
-        or not 0 <= position[1] < self.dim:
+           or not 0 <= position[1] < self.dim:
             raise OutOfBoundError(position)
 
         if self.board[position[0]][position[1]] is not None:
@@ -215,7 +218,7 @@ class ShogiBoard():
                                 "that causes the checking function to return False")
         except GameplayException as gameplay_exception:
             logging.warning("An invalid move caused the game to end. "
-                           f"Details:\n{repr(gameplay_exception)}")
+                            f"Details:\n{repr(gameplay_exception)}")
             self.winner = not current_player
 
     # end perform_drop()
@@ -232,10 +235,13 @@ class ShogiBoard():
                 string_matrix[matrix_start_x+1][matrix_start_y+1] = ' '
                 if self.board[index_x][index_y] is None:
                     continue
-                string_matrix[matrix_start_x+0][matrix_start_y+1] = '↑' if self.board[index_x][index_y].player == self.black else '↓'
-                string_matrix[matrix_start_x+1][matrix_start_y+0] = repr(self.board[index_x][index_y])[0]
+                string_matrix[matrix_start_x+0][matrix_start_y+1] = \
+                    '↑' if self.board[index_x][index_y].player == self.black else '↓'
+                string_matrix[matrix_start_x+1][matrix_start_y+0] = \
+                    repr(self.board[index_x][index_y])[0]
                 if len(repr(self.board[index_x][index_y])) > 1:
-                    string_matrix[matrix_start_x+1][matrix_start_y+1] = repr(self.board[index_x][index_y])[1]
+                    string_matrix[matrix_start_x+1][matrix_start_y+1] = \
+                        repr(self.board[index_x][index_y])[1]
 
         return '\n'.join(list(map(lambda chlist: ''.join(chlist), string_matrix)))
 
