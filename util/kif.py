@@ -1,4 +1,5 @@
 import re
+from typing import Tuple
 
 headers_mapping = {
     '手合割': 'handicap',
@@ -40,6 +41,15 @@ piece_types = ['玉', '飛', '龍', '竜', '角', '馬', '金', '銀',
 drop_indicator = '打'
 promote_indicator = '成'
 
+def format_coordinates(coordinate: Tuple[int, int]):
+    """
+    Convert the technical coordinate tuple into the tuple format
+    compatible with kifu / shogi notations
+
+    Returns:
+        str: A string of the new notation
+    """
+    return full_arabic_nums[coordinate[0]] + full_kanji_nums[coordinate[1]]
 
 class Kif:
     """

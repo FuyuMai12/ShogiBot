@@ -1,6 +1,7 @@
 from typing import Literal, Tuple, Type
 
 from const.gameplay import player_string_mappings, Player
+from util.kif import format_coordinates
 
 
 class GameplayException(Exception):
@@ -49,7 +50,7 @@ class OutOfBoundError(GameplayException):
     Exception raised when an input coordinate is out of bound
     """
     def __init__(self, coordinate: Tuple[int, int]):
-        error_message = f"Coordinate {coordinate} out of bound."
+        error_message = f"Coordinate {format_coordinates(coordinate)} out of bound."
         super().__init__(error_message)
 
     # end __init__()
@@ -62,7 +63,7 @@ class EmptyCellError(GameplayException):
     Exception raised when an initial cell for a piece move is empty
     """
     def __init__(self, coordinate: Tuple[int, int]):
-        error_message = f"Coordinate {coordinate} has no piece."
+        error_message = f"Coordinate {format_coordinates(coordinate)} has no piece."
         super().__init__(error_message)
 
     # end __init__()
@@ -78,7 +79,7 @@ class PieceNotOwnedError(GameplayException):
     def __init__(self, coordinate: Tuple[int, int],
                  attempted_player: Literal['junior', 'senior'],
                  actual_owner: Literal['junior', 'senior']):
-        error_message = f"Coordinate {coordinate} has a piece " \
+        error_message = f"Coordinate {format_coordinates(coordinate)} has a piece " \
                         f"being commanded by {attempted_player}, " \
                         f"yet it's actually owned by {actual_owner}."
         super().__init__(error_message)
@@ -96,7 +97,7 @@ class NotPromotableError(GameplayException):
     def __init__(self, piece_type: Type,
                  coordinate: Tuple[int, int]):
         error_message = f"Impossible to promote the {piece_type} " \
-                        f"at coordinate {coordinate}."
+                        f"at coordinate {format_coordinates(coordinate)}."
         super().__init__(error_message)
 
     # end __init__()
@@ -112,8 +113,9 @@ class NotInPromotionZoneError(GameplayException):
     def __init__(self,
                  initial_position: Tuple[int, int],
                  final_position: Tuple[int, int],):
-        error_message = f"Piece moving from {initial_position} to " \
-                        f"{final_position} cannot promote due to not being in promotion zone."
+        error_message = f"Piece moving from {format_coordinates(initial_position)} to " \
+                        f"{format_coordinates(final_position)} cannot be promoted " \
+                        "due to not being in promotion zone."
         super().__init__(error_message)
 
     # end __init__()
@@ -130,8 +132,8 @@ class NoPathingFoundError(GameplayException):
                  initial_position: Tuple[int, int],
                  final_position: Tuple[int, int]):
         error_message = f"Impossible to move a {piece_type} " \
-                        f"from coordinate {initial_position} " \
-                        f"to coordinate {final_position}."
+                        f"from coordinate {format_coordinates(initial_position)} " \
+                        f"to coordinate {format_coordinates(final_position)}."
         super().__init__(error_message)
 
     # end __init__()
@@ -148,8 +150,8 @@ class BlockedPathingError(GameplayException):
                  initial_position: Tuple[int, int],
                  final_position: Tuple[int, int]):
         error_message = f"The path to move a {piece_type} " \
-                        f"from coordinate {initial_position} " \
-                        f"to coordinate {final_position} is blocked."
+                        f"from coordinate {format_coordinates(initial_position)} " \
+                        f"to coordinate {format_coordinates(final_position)} is blocked."
         super().__init__(error_message)
 
     # end __init__()
@@ -162,7 +164,7 @@ class OccupiedCellError(GameplayException):
     Exception raised when an initial cell for a drop is occupied
     """
     def __init__(self, coordinate: Tuple[int, int]):
-        error_message = f"A piece is already at coordinate {coordinate}."
+        error_message = f"A piece is already at coordinate {format_coordinates(coordinate)}."
         super().__init__(error_message)
 
     # end __init__()
@@ -189,7 +191,7 @@ class InvalidDropError(GameplayException):
     Exception raised when the drop violates some of the rules
     """
     def __init__(self, piece_type: type, coordinate: Tuple[int, int], violated_rule: str):
-        error_message = f"A {piece_type} drop at coordinate {coordinate} " \
+        error_message = f"A {piece_type} drop at coordinate {format_coordinates(coordinate)} " \
                         f"is invalid for violating the rule of {violated_rule}."
         super().__init__(error_message)
 
@@ -206,8 +208,8 @@ class SelfExposureMoveError(GameplayException):
                  initial_position: Tuple[int, int],
                  final_position: Tuple[int, int]):
         error_message = f"A move of {piece_type} " \
-                        f"from coordinate {initial_position} " \
-                        f"to coordinate {final_position} exposes the player to a check."
+                        f"from coordinate {format_coordinates(initial_position)} to coordinate " \
+                        f"{format_coordinates(final_position)} exposes the player to a check."
         super().__init__(error_message)
 
     # end __init__()
@@ -222,7 +224,7 @@ class SelfExposureDropError(GameplayException):
     def __init__(self, piece_type: Type,
                  coordinate: Tuple[int, int]):
         error_message = f"A drop of {piece_type} " \
-                        f"to coordinate {coordinate} exposes the player to a check."
+                        f"to coordinate {format_coordinates(coordinate)} exposes the player to a check."
         super().__init__(error_message)
 
     # end __init__()

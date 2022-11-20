@@ -75,11 +75,11 @@ class InvalidDroppingUtils:
             bool: a value denoting if that pawn drop causes a nifu (True) or not (False)
         """
         # simply check all positions in the corresponding column
-        for x_coordinate in range(board_dim):
-            if board_matrix[x_coordinate][position[1]] is not None \
-               and isinstance(board_matrix[x_coordinate][position[1]], PawnPiece) \
+        for y_coordinate in range(board_dim):
+            if board_matrix[position[0]][y_coordinate] is not None \
+               and isinstance(board_matrix[position[0]][y_coordinate], PawnPiece) \
                and not piece.is_promoted \
-               and piece.player == board_matrix[x_coordinate][position[1]].player:
+               and piece.player == board_matrix[position[0]][y_coordinate].player:
                 return True  # a pawn of the same side found on that column, nifu
 
         return False  # if nothing found, then no nifu

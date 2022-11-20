@@ -293,7 +293,7 @@ class ShogiBoard():
         board = cls(first_move=first_move)
         kif = Kif(kif_file=kif_path)
         for action_dict in kif.kif_dict['actions']:
-            print(action_dict)
+            logging.info(f"Next action: {action_dict}")
             board.perform_action(action_dict=action_dict)
 
         return board
@@ -309,10 +309,19 @@ class ShogiBoard():
             for index_x in range(self.dim)
         ]
 
-        string_matrix = [['＊' for _ in range(self.dim * 3 + 1)] for _ in range(self.dim * 3 + 1)]
+        string_matrix = [['＊' for _ in range(self.dim * 3 + 2)] for _ in range(self.dim * 3 + 2)]
+        for index in range(len(string_matrix)):
+            string_matrix[0][index] = '　'
+            string_matrix[index][-1] = '　'
+        for index in range(len(full_arabic_nums)):
+            actual_index = index * 3 + 1 + 1
+            string_matrix[0][actual_index] = full_arabic_nums[len(full_arabic_nums) - 1 - index]
+        for index in range(len(full_kanji_nums)):
+            actual_index = index * 3 + 2 + 1
+            string_matrix[actual_index][-1] = full_kanji_nums[index]
         for index_x in range(self.dim):
             for index_y in range(self.dim):
-                matrix_start_x = index_x * 3 + 1
+                matrix_start_x = index_x * 3 + 2
                 matrix_start_y = index_y * 3 + 1
                 string_matrix[matrix_start_x+0][matrix_start_y+0] = '　'
                 string_matrix[matrix_start_x+0][matrix_start_y+1] = '　'
