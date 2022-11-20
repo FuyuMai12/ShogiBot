@@ -242,16 +242,16 @@ class ShogiBoard():
         side = self.black if side_symbols.index(side) == 0 else self.white
 
         initial_position = None if action_dict.get('initial_position') is None \
-                           else (
-                                ord(action_dict.get('initial_position')[1]) - ord('1'),
-                                ord(action_dict.get('initial_position')[2]) - ord('1')
-                           )
+            else (
+                ord(action_dict.get('initial_position')[1]) - ord('1'),
+                ord(action_dict.get('initial_position')[2]) - ord('1')
+            )
 
         final_position = None if action_dict.get('final_position') is None \
-                         else (
-                            (full_arabic_nums.index(action_dict.get('final_position')[0])),
-                            (full_kanji_nums.index(action_dict.get('final_position')[1]))
-                         )
+            else (
+                (full_arabic_nums.index(action_dict.get('final_position')[0])),
+                (full_kanji_nums.index(action_dict.get('final_position')[1]))
+            )
 
         piece = action_dict.get('piece')
 

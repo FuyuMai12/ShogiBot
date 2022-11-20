@@ -41,6 +41,7 @@ piece_types = ['玉', '飛', '龍', '竜', '角', '馬', '金', '銀',
 drop_indicator = '打'
 promote_indicator = '成'
 
+
 def format_coordinates(coordinate: Tuple[int, int]):
     """
     Convert the technical coordinate tuple into the tuple format
@@ -50,6 +51,7 @@ def format_coordinates(coordinate: Tuple[int, int]):
         str: A string of the new notation
     """
     return full_arabic_nums[coordinate[0]] + full_kanji_nums[coordinate[1]]
+
 
 class Kif:
     """
@@ -85,7 +87,7 @@ class Kif:
                             'action_time': action_time,
                             'side': regex_groups.group(1),
                             'final_position': regex_groups.group(2) if regex_groups.group(2) != repeat_destination
-                                              else content_dict['actions'][-1]['final_position'],
+                            else content_dict['actions'][-1]['final_position'],
                             'piece': regex_groups.group(3),
                             'drop_promote': regex_groups.group(4),
                             'initial_position': regex_groups.group(5)
@@ -96,9 +98,3 @@ class Kif:
                 pass
 
         return content_dict
-
-
-if __name__ == '__main__':
-    kif_path = 'games/81Dojo-2211162159-DaimyoTuruu-phuctuyen.kif'
-    kif = Kif(kif_file=kif_path)
-    print('\n'.join(map(str, kif.kif_dict['actions'])))
