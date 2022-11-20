@@ -69,7 +69,9 @@ class BasePiece():
                  promoted_name_kanji_abbr_senior: Optional[str],
                  promoted_name_kanji_abbr_junior: Optional[str],
                  promoted_name_en_abbr: Optional[str],
-                 promoted_name_vi_abbr: Optional[str]):
+                 promoted_name_vi_abbr: Optional[str],
+                 moves: List[MovementBaseline],
+                 promoted_moves: List[MovementBaseline]):
         """
         Constructor. Not recommended to use this. See the next method.
 
@@ -152,6 +154,10 @@ class BasePiece():
         - promoted_name_vi_abbr (Optional[str]):
             Piece type's abbreviation in Vietnamese
             Must be None if promotable=False
+        - moves (List[MovementBaseline]):
+            A list of moves decleared for the piece in normal form
+        - promoted_moves (List[MovementBaseline]):
+            A list of moves decleared for the piece in promoted form
         """
         self.id = id
 
@@ -182,8 +188,8 @@ class BasePiece():
         # instantinating moveset attributes
         self.promotable: bool = promotable
         self.is_promoted: bool = False
-        self.moves: List[MovementBaseline] = []
-        self.promoted_moves: List[MovementBaseline] = []
+        self.moves: List[MovementBaseline] = moves
+        self.promoted_moves: List[MovementBaseline] = promoted_moves
         self.moves_in_use: List[MovementBaseline] = self.moves
 
         # attribute to check for junior(challenger)/senior(challengee) status
@@ -207,6 +213,25 @@ class BasePiece():
         """
         file = open(json_file, 'r', encoding='utf-8')
         imported_dict = json.load(file)
+        moves, promoted_moves = [], []
+        for baseline_dict in imported_dict['moves']:
+            moves.append(
+                MovementBaseline(
+                    x_per_step=baseline_dict['x_per_step'],
+                    y_per_step=baseline_dict['y_per_step'],
+                    step_limit=baseline_dict['step_limit'],
+                    bypass_pieces=baseline_dict['bypass_pieces']
+                )
+            )
+        for baseline_dict in imported_dict['promoted_moves']:
+            promoted_moves.append(
+                MovementBaseline(
+                    x_per_step=baseline_dict['x_per_step'],
+                    y_per_step=baseline_dict['y_per_step'],
+                    step_limit=baseline_dict['step_limit'],
+                    bypass_pieces=baseline_dict['bypass_pieces']
+                )
+            )
         base_piece = cls(
             id=id,
             name_en=imported_dict['name_en'],
@@ -229,26 +254,10 @@ class BasePiece():
             promoted_name_kanji_abbr_senior=imported_dict['promoted_name_kanji_abbr_senior'],
             promoted_name_kanji_abbr_junior=imported_dict['promoted_name_kanji_abbr_junior'],
             promoted_name_en_abbr=imported_dict['promoted_name_en_abbr'],
-            promoted_name_vi_abbr=imported_dict['promoted_name_vi_abbr']
+            promoted_name_vi_abbr=imported_dict['promoted_name_vi_abbr'],
+            moves=moves,
+            promoted_moves=promoted_moves,
         )
-        for baseline_dict in imported_dict['moves']:
-            base_piece.moves.append(
-                MovementBaseline(
-                    x_per_step=baseline_dict['x_per_step'],
-                    y_per_step=baseline_dict['y_per_step'],
-                    step_limit=baseline_dict['step_limit'],
-                    bypass_pieces=baseline_dict['bypass_pieces']
-                )
-            )
-        for baseline_dict in imported_dict['promoted_moves']:
-            base_piece.promoted_moves.append(
-                MovementBaseline(
-                    x_per_step=baseline_dict['x_per_step'],
-                    y_per_step=baseline_dict['y_per_step'],
-                    step_limit=baseline_dict['step_limit'],
-                    bypass_pieces=baseline_dict['bypass_pieces']
-                )
-            )
         return base_piece
 
     # end create_from_json_profile()
@@ -294,13 +303,17 @@ class BasePiece():
         self.player = None
 
     def __repr__(self):
-        vi_name = None
+        kanji = None
         if self.is_promoted:
-            vi_name = self.promoted_name_vi_abbr
+            kanji = self.promoted_name_kanji_abbr_senior
+            if self.player == Player.Junior and self.promoted_name_kanji_abbr_junior is not None:
+                kanji = self.promoted_name_kanji_abbr_junior
         else:
-            vi_name = self.name_vi_abbr
+            kanji = self.name_kanji_abbr_senior
+            if self.player == Player.Junior and self.name_kanji_abbr_junior is not None:
+                kanji = self.name_kanji_abbr_junior
 
-        return vi_name
+        return kanji
 
     # end __repr__()
 

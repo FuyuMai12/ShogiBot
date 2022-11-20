@@ -33,7 +33,9 @@ class LancePiece(BasePiece):
             promoted_name_kanji_abbr_senior=base.promoted_name_kanji_abbr_senior,
             promoted_name_kanji_abbr_junior=base.promoted_name_kanji_abbr_junior,
             promoted_name_en_abbr=base.promoted_name_en_abbr,
-            promoted_name_vi_abbr=base.promoted_name_vi_abbr
+            promoted_name_vi_abbr=base.promoted_name_vi_abbr,
+            moves=base.moves,
+            promoted_moves=base.promoted_moves
         )
 
     # end __init__()

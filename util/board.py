@@ -38,7 +38,7 @@ class InvalidDroppingUtils:
         Returns:
             bool: a value denoting if that piece is stuck (True) or not (False)
         """
-        pov_coefficient = 1 if piece.player == board_black else -1
+        pov_coefficient = -1 if piece.player == board_black else 1
         for move_baseline in piece.moves_in_use:
             minimally_shifted_position = (
                 position[0] + move_baseline.x_per_step * pov_coefficient,
@@ -89,8 +89,11 @@ class InvalidDroppingUtils:
     @classmethod
     def check_for_uchifuzume(cls,
                              piece: PawnPiece,
+                             board_black: Player,
+                             board_dim: int,
                              board_matrix: List[List[BasePiece]],
-                             position: Tuple[int, int]) -> bool:
+                             position: Tuple[int, int],
+                             checked_side_captured_pieces: List[BasePiece]) -> bool:
         """
         Check if a pawn drop causes an uchifuzume (checkmate formed by dropping that pawn)
 
@@ -110,7 +113,11 @@ class InvalidDroppingUtils:
         board_matrix[position[0]][position[1]] = piece  # add the new piece on
 
         is_checkmate = CheckmateUtils.is_checkmate(
-            board_matrix=board_matrix, checking_player=piece.player
+            board_black=board_black,
+            board_dim=board_dim,
+            board_matrix=board_matrix,
+            checked_side_captured_pieces=checked_side_captured_pieces,
+            checking_player=piece.player
         )
 
         board_matrix[position[0]][position[1]] = old_piece  # return the old piece when done checking
@@ -151,7 +158,7 @@ class MovementUtils:
                 - step: int
             If no valid pathing is available, this method returned None
         """
-        pov_coefficient = 1 if piece.player == board_black else -1
+        pov_coefficient = -1 if piece.player == board_black else 1
         for baseline in piece.moves_in_use:
             # check invalid standing: if x_per_step/y_per_step is 0,
             # then position change for that axis should also be 0
@@ -161,9 +168,9 @@ class MovementUtils:
                 continue
             # count the number of steps; if standing, notate by None
             steps_required = (
-                (final_position[0] - initial_position[0]) / (baseline.x_per_step * pov_coefficient)
+                (final_position[0] - initial_position[0]) // (baseline.x_per_step * pov_coefficient)
                 if baseline.x_per_step != 0 else None,
-                (final_position[1] - initial_position[1]) / (baseline.y_per_step * pov_coefficient)
+                (final_position[1] - initial_position[1]) // (baseline.y_per_step * pov_coefficient)
                 if baseline.y_per_step != 0 else None,
             )
             # mismatched step counts means invalid move
@@ -221,7 +228,7 @@ class MovementUtils:
         Returns:
             bool: a value denoting if the pathing is blocked (True) or not (False)
         """
-        pov_coefficient = 1 if piece.player == board_black else -1
+        pov_coefficient = -1 if piece.player == board_black else 1
         final_position = (
             position[0] + baseline.x_per_step * step * pov_coefficient,
             position[1] + baseline.y_per_step * step * pov_coefficient
@@ -232,6 +239,7 @@ class MovementUtils:
 
         if cls.is_valid_pathing(
             piece=piece,
+            board_black=board_black,
             initial_position=position,
             final_position=final_position
         ) != (baseline, step):
@@ -326,7 +334,8 @@ class MovementUtils:
                       board_black: Player,
                       board_dim: int,
                       board_matrix: List[List[BasePiece]],
-                      drop_position: Tuple[int, int]) -> bool:
+                      drop_position: Tuple[int, int],
+                      opponent_captured_pieces: List[BasePiece]) -> bool:
         """
         Check if dropping a piece at a certain position is valid.
         This method assumes that the position is valid for the board, and it is
@@ -343,6 +352,8 @@ class MovementUtils:
             The matrix (list of list) denoting the pieces currently standing on the current board
         - drop_position (Tuple[int, int]):
             Coordinate of the dropping position of that piece
+        - opponent_captured_pieces (List[BasePiece]):
+            List of pieces captured by the opponent (for uchifuzume check)
 
         Returns:
             bool: a value denoting if that drop is valid (True) or not (False)
@@ -352,8 +363,7 @@ class MovementUtils:
             piece=piece,
             board_black=board_black,
             board_dim=board_dim,
-            board_matrix=board_matrix,
-            drop_position=drop_position
+            position=drop_position
         ):
             raise InvalidDropError(
                 piece_type=type(piece),
@@ -366,7 +376,7 @@ class MovementUtils:
             piece=piece,
             board_dim=board_dim,
             board_matrix=board_matrix,
-            drop_position=drop_position
+            position=drop_position
         ) and isinstance(piece, PawnPiece):
             raise InvalidDropError(
                 piece_type=type(piece),
@@ -377,8 +387,11 @@ class MovementUtils:
         # uchifuzume check (must be pawn)
         if InvalidDroppingUtils.check_for_uchifuzume(
             piece=piece,
+            board_black=board_black,
+            board_dim=board_dim,
             board_matrix=board_matrix,
-            drop_position=drop_position
+            position=drop_position,
+            checked_side_captured_pieces=opponent_captured_pieces
         ) and isinstance(piece, PawnPiece):
             raise InvalidDropError(
                 piece_type=type(piece),
@@ -433,6 +446,7 @@ class MovementUtils:
                     continue
                 pathing = cls.is_valid_pathing(
                     piece=board_matrix[x_coor][y_coor],
+                    board_black=board_black,
                     initial_position=(x_coor, y_coor),
                     final_position=position
                 )
@@ -505,7 +519,7 @@ class CheckmateUtils:
                    and board_matrix[x_coor][y_coor].player != checking_player:
                     king_position = (x_coor, y_coor)
 
-        return MovementUtils.get_threatening_list(
+        return king_position, MovementUtils.get_threatening_list(
             board_black=board_black,
             board_dim=board_dim,
             board_matrix=board_matrix,

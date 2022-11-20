@@ -12,7 +12,7 @@ class GameplayException(Exception):
 
 class GameNotInitiatedError(GameplayException):
     """
-    Exception raised when a move is made before the first player is decided
+    Exception raised when an action is made before the first player is decided
     """
     pass
 
@@ -21,7 +21,7 @@ class GameNotInitiatedError(GameplayException):
 
 class GameEndedError(GameplayException):
     """
-    Exception raised when a move is made after the game ended
+    Exception raised when an action is made after the game ended
     """
     pass
 
@@ -30,12 +30,12 @@ class GameEndedError(GameplayException):
 
 class IncorrectPlayerError(GameplayException):
     """
-    Exception raised when a move is made by an incorrect player
+    Exception raised when an action is made by an incorrect player
     """
     def __init__(self,
                  attempted_player: Player,
                  actual_player: Player):
-        error_message = f"Expected a move from {player_string_mappings[actual_player]}, " \
+        error_message = f"Expected an action from {player_string_mappings[actual_player]}, " \
                         f"got {player_string_mappings[attempted_player]} instead."
         super().__init__(error_message)
 

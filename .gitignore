@@ -4,6 +4,10 @@
 ### Temp files ###
 *.tmp
 
+### ShogiBot files ###
+games/*
+models/*
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

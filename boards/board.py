@@ -3,7 +3,6 @@ import logging
 from pydoc import locate
 from typing import Dict, List, Optional, Tuple
 
-from boards.util import InvalidDroppingUtils, MovementUtils
 from const.gameplay import Player
 from errors.gameplay import (
     DroppingPieceNotExistedError, EmptyCellError, GameEndedError, GameNotInitiatedError,
@@ -11,6 +10,11 @@ from errors.gameplay import (
     OccupiedCellError, OutOfBoundError, PieceNotOwnedError
 )
 from pieces.base import BasePiece
+from util.board import InvalidDroppingUtils, MovementUtils
+from util.kif import (
+    Kif, drop_indicator, full_arabic_nums, full_kanji_nums,
+    promote_indicator, side_symbols
+)
 
 default_profile_path = "profiles/boards/standard.json"
 
@@ -26,9 +30,9 @@ class ShogiBoard():
         self.dim: int = imported_dict['dimension']
 
         self.black: Player = first_move
-        self.white: Player = not self.black
+        self.white: Player = ~self.black
 
-        self.next_move: Player = self.black
+        self.next_action: Player = self.black
 
         self.winner: Player = None
 
@@ -39,7 +43,7 @@ class ShogiBoard():
             for _ in range(self.dim)
         ]
 
-        self.captured_pieces: Dict[Player, List] = {
+        self.captured_pieces: Dict[Player, List[BasePiece]] = {
             self.black: [],
             self.white: []
         }
@@ -47,8 +51,8 @@ class ShogiBoard():
         incremental_id = 0
 
         for unit_dict in imported_dict['starting_units']:
-            coor_y = (self.dim - 1) - (unit_dict['coor_x'] - 1)
-            coor_x = (unit_dict['coor_y'] - 1)
+            coor_x = unit_dict['coor_x'] - 1
+            coor_y = unit_dict['coor_y'] - 1
             unit_type = unit_dict['unit_type']
             side = unit_dict['side']
             piece: BasePiece = locate(f'pieces.{unit_type[:-5].lower()}.{unit_type}')(id=incremental_id)
@@ -85,10 +89,10 @@ class ShogiBoard():
             raise GameNotInitiatedError
         if self.winner is not None:
             raise GameEndedError
-        if current_player != self.next_move:
+        if current_player != self.next_action:
             raise IncorrectPlayerError(
                 attempted_player=current_player,
-                actual_player=self.next_move
+                actual_player=self.next_action
             )
         if not 0 <= initial_position[0] < self.dim \
            or not 0 <= initial_position[1] < self.dim:
@@ -104,7 +108,7 @@ class ShogiBoard():
             raise PieceNotOwnedError(
                 coordinate=initial_position,
                 attempted_player=current_player,
-                actual_owner=not current_player
+                actual_owner=~current_player
             )
 
         if promote and not self.board[initial_position[0]][initial_position[1]].promotable:
@@ -159,13 +163,14 @@ class ShogiBoard():
                         )
 
                 self.board[initial_position[0]][initial_position[1]] = None
+                self.next_action = ~self.next_action
             else:
                 raise Exception("An unknown error existed "
                                 "that causes the checking function to return False")
         except GameplayException as gameplay_exception:
             logging.warning("An invalid move caused the game to end. "
                             f"Details:\n{repr(gameplay_exception)}")
-            self.winner = not current_player
+            self.winner = ~current_player
 
     # end perform_move()
 
@@ -188,10 +193,10 @@ class ShogiBoard():
             raise GameNotInitiatedError
         if self.winner is not None:
             raise GameEndedError
-        if current_player != self.next_move:
+        if current_player != self.next_action:
             raise IncorrectPlayerError(
                 attempted_player=current_player,
-                actual_player=self.next_move
+                actual_player=self.next_action
             )
         if not 0 <= position[0] < self.dim \
            or not 0 <= position[1] < self.dim:
@@ -209,39 +214,119 @@ class ShogiBoard():
                 board_black=self.black,
                 board_dim=self.dim,
                 board_matrix=self.board,
-                drop_position=position
+                drop_position=position,
+                opponent_captured_pieces=self.captured_pieces[~current_player]
             ):
                 self.board[position[0]][position[1]] = piece
                 self.captured_pieces[current_player].remove(piece)
+                self.next_action = ~self.next_action
             else:
                 raise Exception("An unknown error existed "
                                 "that causes the checking function to return False")
         except GameplayException as gameplay_exception:
             logging.warning("An invalid move caused the game to end. "
                             f"Details:\n{repr(gameplay_exception)}")
-            self.winner = not current_player
+            self.winner = ~current_player
 
     # end perform_drop()
 
+    def perform_action(self, action_dict: dict):
+        """
+        Perform an action on the board with the action specification dictionary
+
+        Arguments:
+        - action_dict (dict):
+            The dictionary containing the action to be performed
+        """
+        side = action_dict.get('side') or side_symbols[(int(action_dict.get('action_no')) - 1) % 2]
+        side = self.black if side_symbols.index(side) == 0 else self.white
+
+        initial_position = None if action_dict.get('initial_position') is None \
+                           else (
+                                ord(action_dict.get('initial_position')[1]) - ord('1'),
+                                ord(action_dict.get('initial_position')[2]) - ord('1')
+                           )
+
+        final_position = None if action_dict.get('final_position') is None \
+                         else (
+                            (full_arabic_nums.index(action_dict.get('final_position')[0])),
+                            (full_kanji_nums.index(action_dict.get('final_position')[1]))
+                         )
+
+        piece = action_dict.get('piece')
+
+        if action_dict.get('drop_promote') == drop_indicator:
+            eligible_piece = None
+            for candidate_piece in self.captured_pieces[side]:
+                if candidate_piece.name_kanji_abbr_junior == piece \
+                   or candidate_piece.name_kanji_abbr_senior == piece \
+                   or candidate_piece.name_kanji_full_junior == piece \
+                   or candidate_piece.name_kanji_full_senior == piece:
+                    eligible_piece = candidate_piece
+                    break
+            self.perform_drop(
+                piece=eligible_piece,
+                current_player=side,
+                position=final_position
+            )
+        else:
+            self.perform_move(
+                current_player=side,
+                initial_position=initial_position,
+                final_position=final_position,
+                promote=action_dict.get('drop_promote') == promote_indicator
+            )
+
+    # end perform_action()
+
+    @classmethod
+    def create_from_kif(cls, first_move: Player, kif_path: str):
+        """
+        Create a board from an existing KIF file
+
+        Arguments:
+        - first_move (Player):
+            Check if the black player is a junior or senior
+        - kif_path (str):
+            Path to the KIF file used for importing
+        """
+        board = cls(first_move=first_move)
+        kif = Kif(kif_file=kif_path)
+        for action_dict in kif.kif_dict['actions']:
+            print(action_dict)
+            board.perform_action(action_dict=action_dict)
+
+        return board
+
+    # end create_from_kif()
+
     def __repr__(self):
-        string_matrix = [['*' for _ in range(self.dim * 3 + 1)] for _ in range(self.dim * 3 + 1)]
+        displaying_board = [
+            [
+                self.board[self.dim - 1 - index_y][index_x]
+                for index_y in range(self.dim)
+            ]
+            for index_x in range(self.dim)
+        ]
+
+        string_matrix = [['＊' for _ in range(self.dim * 3 + 1)] for _ in range(self.dim * 3 + 1)]
         for index_x in range(self.dim):
             for index_y in range(self.dim):
                 matrix_start_x = index_x * 3 + 1
                 matrix_start_y = index_y * 3 + 1
-                string_matrix[matrix_start_x+0][matrix_start_y+0] = ' '
-                string_matrix[matrix_start_x+0][matrix_start_y+1] = ' '
-                string_matrix[matrix_start_x+1][matrix_start_y+0] = ' '
-                string_matrix[matrix_start_x+1][matrix_start_y+1] = ' '
-                if self.board[index_x][index_y] is None:
+                string_matrix[matrix_start_x+0][matrix_start_y+0] = '　'
+                string_matrix[matrix_start_x+0][matrix_start_y+1] = '　'
+                string_matrix[matrix_start_x+1][matrix_start_y+0] = '　'
+                string_matrix[matrix_start_x+1][matrix_start_y+1] = '　'
+                if displaying_board[index_x][index_y] is None:
                     continue
                 string_matrix[matrix_start_x+0][matrix_start_y+1] = \
-                    '↑' if self.board[index_x][index_y].player == self.black else '↓'
+                    '↑↑' if displaying_board[index_x][index_y].player == self.black else '↓↓'
                 string_matrix[matrix_start_x+1][matrix_start_y+0] = \
-                    repr(self.board[index_x][index_y])[0]
-                if len(repr(self.board[index_x][index_y])) > 1:
+                    repr(displaying_board[index_x][index_y])[0]
+                if len(repr(displaying_board[index_x][index_y])) > 1:
                     string_matrix[matrix_start_x+1][matrix_start_y+1] = \
-                        repr(self.board[index_x][index_y])[1]
+                        repr(displaying_board[index_x][index_y])[1]
 
         return '\n'.join(list(map(lambda chlist: ''.join(chlist), string_matrix)))
 
