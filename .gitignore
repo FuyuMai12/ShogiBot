@@ -6,7 +6,7 @@
 
 ### ShogiBot files ###
 games/*
-models/*
+bots/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

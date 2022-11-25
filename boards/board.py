@@ -1,6 +1,7 @@
 import json
 import logging
 from pydoc import locate
+from traceback import print_exc
 from typing import Dict, List, Optional, Tuple
 
 from const.gameplay import Player
@@ -10,7 +11,8 @@ from errors.gameplay import (
     OccupiedCellError, OutOfBoundError, PieceNotOwnedError
 )
 from pieces.base import BasePiece
-from util.board import InvalidDroppingUtils, MovementUtils
+from pieces.king import KingPiece
+from util.board import CheckmateUtils, InvalidDroppingUtils, MovementUtils
 from util.kif import (
     Kif, drop_indicator, full_arabic_nums, full_kanji_nums,
     promote_indicator, side_symbols
@@ -119,12 +121,12 @@ class ShogiBoard():
 
         if promote and (
             (current_player == self.black
-             and not 0 <= initial_position[0] <= 2
-             and not 0 <= final_position[0] <= 2)
+             and not (0 <= initial_position[1] <= 2
+                      or 0 <= final_position[1] <= 2))
             or
             (current_player == self.white
-             and not self.dim-2 < initial_position[0] < self.dim
-             and not self.dim-2 < final_position[0] < self.dim)
+             and not (self.dim-3 <= initial_position[1] < self.dim
+                      or self.dim-3 <= final_position[1] < self.dim))
         ):
             raise NotInPromotionZoneError(
                 initial_position=initial_position,
@@ -141,10 +143,15 @@ class ShogiBoard():
                 final_position=final_position
             ):
                 if self.board[final_position[0]][final_position[1]] is not None:
+                    self.board[final_position[0]][final_position[1]].demote()
                     self.board[final_position[0]][final_position[1]].set_player(current_player)
                     self.captured_pieces[current_player].append(
                         self.board[final_position[0]][final_position[1]]
                     )
+                    if isinstance(self.board[final_position[0]][final_position[1]], KingPiece):
+                        logging.warning("A king has been captured.")
+                        self.winner = current_player
+                    self.board[final_position[0]][final_position[1]] = None
 
                 self.board[final_position[0]][final_position[1]] = \
                     self.board[initial_position[0]][initial_position[1]]
@@ -163,6 +170,8 @@ class ShogiBoard():
                         )
 
                 self.board[initial_position[0]][initial_position[1]] = None
+                if promote:
+                    self.board[final_position[0]][final_position[1]].promote()
                 self.next_action = ~self.next_action
             else:
                 raise Exception("An unknown error existed "
@@ -170,6 +179,18 @@ class ShogiBoard():
         except GameplayException as gameplay_exception:
             logging.warning("An invalid move caused the game to end. "
                             f"Details:\n{repr(gameplay_exception)}")
+            print_exc()
+            self.winner = ~current_player
+
+        _, checking_threats = CheckmateUtils.get_checking_list(
+            board_black=self.black,
+            board_dim=self.dim,
+            board_matrix=self.board,
+            checking_player=~current_player
+        )
+        if len(checking_threats) > 0:
+            logging.warning("An invalid action caused the game to end. "
+                            "Details: King is left checked after an action.")
             self.winner = ~current_player
 
     # end perform_move()
@@ -217,8 +238,10 @@ class ShogiBoard():
                 drop_position=position,
                 opponent_captured_pieces=self.captured_pieces[~current_player]
             ):
-                self.board[position[0]][position[1]] = piece
+                self.board[position[0]][position[1]] = piece.copy()
+                logging.info(self.captured_pieces[current_player])
                 self.captured_pieces[current_player].remove(piece)
+                logging.info(self.captured_pieces[current_player])
                 self.next_action = ~self.next_action
             else:
                 raise Exception("An unknown error existed "
@@ -226,6 +249,18 @@ class ShogiBoard():
         except GameplayException as gameplay_exception:
             logging.warning("An invalid move caused the game to end. "
                             f"Details:\n{repr(gameplay_exception)}")
+            print_exc()
+            self.winner = ~current_player
+
+        _, checking_threats = CheckmateUtils.get_checking_list(
+            board_black=self.black,
+            board_dim=self.dim,
+            board_matrix=self.board,
+            checking_player=~current_player
+        )
+        if len(checking_threats) > 0:
+            logging.warning("An invalid action caused the game to end. "
+                            "Details: King is left checked after an action.")
             self.winner = ~current_player
 
     # end perform_drop()
@@ -238,6 +273,7 @@ class ShogiBoard():
         - action_dict (dict):
             The dictionary containing the action to be performed
         """
+        logging.info(f"Incoming move specification: {action_dict}")
         side = action_dict.get('side') or side_symbols[(int(action_dict.get('action_no')) - 1) % 2]
         side = self.black if side_symbols.index(side) == 0 else self.white
 
@@ -274,7 +310,7 @@ class ShogiBoard():
                 current_player=side,
                 initial_position=initial_position,
                 final_position=final_position,
-                promote=action_dict.get('drop_promote') == promote_indicator
+                promote=(action_dict.get('drop_promote') == promote_indicator)
             )
 
     # end perform_action()
@@ -330,7 +366,7 @@ class ShogiBoard():
                 if displaying_board[index_x][index_y] is None:
                     continue
                 string_matrix[matrix_start_x+0][matrix_start_y+1] = \
-                    '↑↑' if displaying_board[index_x][index_y].player == self.black else '↓↓'
+                    '＾' if displaying_board[index_x][index_y].player == self.black else 'ｖ'
                 string_matrix[matrix_start_x+1][matrix_start_y+0] = \
                     repr(displaying_board[index_x][index_y])[0]
                 if len(repr(displaying_board[index_x][index_y])) > 1:

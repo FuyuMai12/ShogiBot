@@ -128,10 +128,10 @@ class NoPathingFoundError(GameplayException):
     Exception raised when a movement of a piece from a position to another
     is not possible due to no valid pathing is found
     """
-    def __init__(self, piece_type: Type,
+    def __init__(self, promoted: bool, piece_type: Type,
                  initial_position: Tuple[int, int],
                  final_position: Tuple[int, int]):
-        error_message = f"Impossible to move a {piece_type} " \
+        error_message = f"Impossible to move a {'promoted ' if promoted else ''}{piece_type} " \
                         f"from coordinate {format_coordinates(initial_position)} " \
                         f"to coordinate {format_coordinates(final_position)}."
         super().__init__(error_message)

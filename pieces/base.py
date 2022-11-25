@@ -40,6 +40,14 @@ class MovementBaseline():
 
     # end __repr__()
 
+    def __eq__(self, other):
+        return self.x_per_step == other.x_per_step \
+               and self.y_per_step == other.y_per_step \
+               and self.step_limit == other.step_limit \
+               and self.bypass_pieces == other.bypass_pieces
+
+    # end __eq__()
+
 # end MovementBaseline
 
 
@@ -196,6 +204,71 @@ class BasePiece():
         self.player: Player = None
 
     # end __init__()
+
+    def copy(self):
+        """
+        Create a copy of self
+        """
+        if type(self) is BasePiece:
+            doppel = type(self)(
+                id=self.id,
+                name_en=self.name_en,
+                name_vi=self.name_vi,
+                name_hv_senior=self.name_hv_senior,
+                name_hv_junior=self.name_hv_junior,
+                name_kanji_full_senior=self.name_kanji_full_senior,
+                name_kanji_full_junior=self.name_kanji_full_junior,
+                name_kanji_abbr_senior=self.name_kanji_abbr_senior,
+                name_kanji_abbr_junior=self.name_kanji_abbr_junior,
+                name_en_abbr=self.name_en_abbr,
+                name_vi_abbr=self.name_vi_abbr,
+                promotable=self.promotable,
+                promoted_name_en=self.promoted_name_en,
+                promoted_name_vi=self.promoted_name_vi,
+                promoted_name_hv_senior=self.promoted_name_hv_senior,
+                promoted_name_hv_junior=self.promoted_name_hv_junior,
+                promoted_name_kanji_full_senior=self.promoted_name_kanji_full_senior,
+                promoted_name_kanji_full_junior=self.promoted_name_kanji_full_junior,
+                promoted_name_kanji_abbr_senior=self.promoted_name_kanji_abbr_senior,
+                promoted_name_kanji_abbr_junior=self.promoted_name_kanji_abbr_junior,
+                promoted_name_en_abbr=self.promoted_name_en_abbr,
+                promoted_name_vi_abbr=self.promoted_name_vi_abbr,
+                moves=self.moves,
+                promoted_moves=self.promoted_moves,
+            )
+        else:
+            doppel = type(self)(id=self.id)
+            doppel.name_en=self.name_en
+            doppel.name_vi=self.name_vi
+            doppel.name_hv_senior=self.name_hv_senior
+            doppel.name_hv_junior=self.name_hv_junior
+            doppel.name_kanji_full_senior=self.name_kanji_full_senior
+            doppel.name_kanji_full_junior=self.name_kanji_full_junior
+            doppel.name_kanji_abbr_senior=self.name_kanji_abbr_senior
+            doppel.name_kanji_abbr_junior=self.name_kanji_abbr_junior
+            doppel.name_en_abbr=self.name_en_abbr
+            doppel.name_vi_abbr=self.name_vi_abbr
+            doppel.promotable=self.promotable
+            doppel.promoted_name_en=self.promoted_name_en
+            doppel.promoted_name_vi=self.promoted_name_vi
+            doppel.promoted_name_hv_senior=self.promoted_name_hv_senior
+            doppel.promoted_name_hv_junior=self.promoted_name_hv_junior
+            doppel.promoted_name_kanji_full_senior=self.promoted_name_kanji_full_senior
+            doppel.promoted_name_kanji_full_junior=self.promoted_name_kanji_full_junior
+            doppel.promoted_name_kanji_abbr_senior=self.promoted_name_kanji_abbr_senior
+            doppel.promoted_name_kanji_abbr_junior=self.promoted_name_kanji_abbr_junior
+            doppel.promoted_name_en_abbr=self.promoted_name_en_abbr
+            doppel.promoted_name_vi_abbr=self.promoted_name_vi_abbr
+            doppel.moves=self.moves
+            doppel.promoted_moves=self.promoted_moves
+
+        doppel.is_promoted = self.is_promoted
+        doppel.moves_in_use = self.moves_in_use
+        doppel.player = self.player
+
+        return doppel
+
+    # end copy()
 
     @classmethod
     def create_from_json_profile(cls, id: int, json_file: Optional[str] = None):

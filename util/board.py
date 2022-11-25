@@ -45,7 +45,7 @@ class InvalidDroppingUtils:
                 position[1] + move_baseline.y_per_step * pov_coefficient
             )
             if 0 <= minimally_shifted_position[0] < board_dim \
-               or 0 <= minimally_shifted_position[1] < board_dim:
+               and 0 <= minimally_shifted_position[1] < board_dim:
                 return False  # not stuck. might be blocked, but that doesn't matter here
 
         return True
@@ -132,6 +132,40 @@ class MovementUtils:
     """
     Class for movement utilities
     """
+    @classmethod
+    def involving_promotion_zone(cls,
+                                 board_black: Player,
+                                 board_dim: int,
+                                 attempting_player: Player,
+                                 initial_position: Tuple[int, int],
+                                 final_position: Tuple[int, int]) -> bool:
+        """
+        Check if a pathing might involve the promotion zone
+
+        Arguments:
+        - board_black (Player):
+            The black player of the board
+        - board_dim (int):
+            The dimension of the board
+        - attempting_player (Player):
+            The player supposed to be attempting the pathing
+        - initial_position (Tuple[int, int]):
+            Coordinate of the initial position of a pathing
+        - final_position (Optional[Tuple[int, int]]):
+            Coordinate of the final position of a pathing
+
+        Returns:
+            bool: A value denoting if such move involves the promotion zone
+        of the attempted player
+        """
+        if attempting_player == board_black:
+            return 0 <= initial_position[1] <= 2 or 0 <= final_position[1] <= 2
+        else:
+            return board_dim - 3 <= initial_position[1] <= board_dim - 1 \
+                   or board_dim - 3 <= final_position[1] <= board_dim - 1
+
+    # end involving_promotion_zone()
+
     @classmethod
     def is_valid_pathing(cls,
                          piece: BasePiece,
@@ -233,17 +267,20 @@ class MovementUtils:
             position[0] + baseline.x_per_step * step * pov_coefficient,
             position[1] + baseline.y_per_step * step * pov_coefficient
         )
-        if final_position[0] < 0 or final_position[0] >= board_dim \
-           or final_position[1] < 0 or final_position[1] >= board_dim:
+        if not 0 <= final_position[0] < board_dim \
+           or not 0 <= final_position[1] < board_dim:
             raise OutOfBoundError(final_position)
 
-        if cls.is_valid_pathing(
+        available_pathing = cls.is_valid_pathing(
             piece=piece,
             board_black=board_black,
             initial_position=position,
             final_position=final_position
-        ) != (baseline, step):
+        )
+
+        if available_pathing != (baseline, step):
             raise NoPathingFoundError(
+                promoted=piece.is_promoted,
                 piece_type=type(piece),
                 initial_position=position,
                 final_position=final_position
@@ -303,21 +340,24 @@ class MovementUtils:
         )
         if not available_pathing:
             raise NoPathingFoundError(
+                promoted=piece.is_promoted,
                 piece_type=type(piece),
                 initial_position=initial_position,
                 final_position=final_position
             )
 
         # final check: pathing not blocked = valid move
-        if cls.is_blocked(
-            piece=piece,
-            position=initial_position,
-            board_black=board_black,
-            board_dim=board_dim,
-            board_matrix=board_matrix,
-            baseline=available_pathing[0],
-            step=available_pathing[1]
-        ):
+        try:
+            cls.is_blocked(
+                piece=piece,
+                position=initial_position,
+                board_black=board_black,
+                board_dim=board_dim,
+                board_matrix=board_matrix,
+                baseline=available_pathing[0],
+                step=available_pathing[1]
+            )
+        except Exception:
             raise BlockedPathingError(
                 piece_type=type(piece),
                 initial_position=initial_position,
@@ -339,7 +379,7 @@ class MovementUtils:
         """
         Check if dropping a piece at a certain position is valid.
         This method assumes that the position is valid for the board, and it is
-        an occupied position.
+        a non-occupied position.
 
         Arguments:
         - piece (BasePiece):
@@ -569,13 +609,15 @@ class CheckmateUtils:
 
         # try to run the king
         for baseline in board_matrix[king_position[0]][king_position[1]].moves_in_use:
-            if not MovementUtils.is_blocked(piece=king_piece,
-                                            position=king_position,
-                                            board_black=board_black,
-                                            board_dim=board_dim,
-                                            board_matrix=board_matrix,
-                                            baseline=baseline,
-                                            step=1):
+            try:
+                MovementUtils.is_blocked(piece=king_piece,
+                                         position=king_position,
+                                         board_black=board_black,
+                                         board_dim=board_dim,
+                                         board_matrix=board_matrix,
+                                         baseline=baseline,
+                                         step=1)
+            except Exception:
                 return False  # a way to flee exists, thus not a checkmate
 
         # if not fleeable, try to block
